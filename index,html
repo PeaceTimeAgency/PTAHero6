@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <title>Peace Time Agency — Retro‑Futuristic Social Media Hub</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="description" content="Peace Time Agency: A galactic NGO using content creation and digital diplomacy to foster peace across the stars. Retro‑futuristic, 60s NASA x TikTok creator studio.">
+  <meta name="description" content="Peace Time Agency: a galactic NGO using content creation and digital diplomacy to foster peace across the stars. 60s NASA x TikTok creator studio aesthetic.">
   <meta name="theme-color" content="#0D1B2A">
   <link rel="canonical" href="https://peacetime.agency/">
   <meta name="keywords" content="retrofuturism, space age pop, bento grid, glassmorphism, neon, tiktok studio, creator agency, live, dashboard ui, peace, cosmic">
@@ -695,7 +695,7 @@
   </footer>
 
   <script>
-    // Toggle helper
+    // Toggle helper – makes vintage‑style buttons glow on press
     function bindToggle(el){
       if (!el) return;
       el.addEventListener('click', ()=>{
@@ -708,7 +708,7 @@
     bindToggle(document.getElementById('briefing1'));
     bindToggle(document.getElementById('briefing2'));
 
-    // Simple mobile menu
+    // Simple mobile menu (hamburger)
     const menuBtn = document.getElementById('menuBtn');
     menuBtn?.addEventListener('click', ()=>{
       document.body.classList.toggle('no-scroll');
@@ -726,12 +726,12 @@
         links.style.border = '1px solid rgba(255,255,255,.14)';
         links.style.borderRadius = '12px';
         links.style.padding = '12px';
-        // close on link click
+        // Close when a link is clicked
         links.querySelectorAll('a').forEach(a => a.onclick = () => links.style.display = '');
       }
     });
 
-    // Peace Clock
+    // Peace Clock – shows a live UTC time
     function updateClock(){
       const now = new Date();
       const pad = n => n.toString().padStart(2,'0');
@@ -741,11 +741,12 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // Starfield canvas
+    // Starfield Canvas – animated background
     const canvas = document.getElementById('starfield');
     const ctx = canvas.getContext('2d', { alpha: true });
     let stars = [];
     let w=0, h=0, cx=0, cy=0;
+
     function resize(){
       const rect = canvas.getBoundingClientRect();
       w = canvas.width = rect.width * devicePixelRatio;
@@ -764,6 +765,7 @@
     }
     const observer = new ResizeObserver(resize);
     observer.observe(canvas);
+
     function draw(){
       ctx.clearRect(0,0,w,h);
       ctx.save();
@@ -785,7 +787,7 @@
     }
     draw();
 
-    // Live viewers counter (simulated)
+    // Live viewers counter (simulated) – updates every 2.5 s
     const liveViewers = document.getElementById('liveViewers');
     function human(n){
       if (n >= 1_000_000) return (n/1_000_000).toFixed(1).replace(/\.0$/,'') + 'M';
@@ -800,7 +802,7 @@
       if (liveViewers) liveViewers.textContent = `${human(viewers)} viewing`;
     }, 2500);
 
-    // Reveal on scroll
+    // Reveal on scroll – adds .in when element enters viewport
     const io = new IntersectionObserver(entries=>{
       entries.forEach(en=>{
         if (en.isIntersecting) {
@@ -811,18 +813,13 @@
     }, { threshold:.12 });
     document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
-    // Peace Stats counters
+    // Peace Stats counters – animate numbers when they appear
     const ioK = new IntersectionObserver(entries=>{
       entries.forEach(en=>{
         if (en.isIntersecting) {
           const el = en.target;
           const target = parseFloat(el.dataset.count);
           const isFloat = !Number.isInteger(target);
-          const suffix = el.textContent.trim().endsWith('Sectors Reached') ? '' :
-                         el.textContent.trim().includes('.') ? '' :
-                         el.textContent.trim().includes('%') ? '%' :
-                         el.textContent.trim().includes('M') ? 'M' :
-                         el.textContent.trim().includes('k') ? 'k' : '';
           const duration = 1400;
           const start = performance.now();
           function step(now){
@@ -839,15 +836,19 @@
     }, { threshold:.4 });
     document.querySelectorAll('.kpi .val').forEach(el=>ioK.observe(el));
 
-    // Form handling
+    // Form handling – client‑side validation + optional POST
     const form = document.getElementById('applyForm');
     const success = document.getElementById('formSuccess');
-    const FORM_ENDPOINT = ""; // Set to your production endpoint to enable real submissions
+    const FORM_ENDPOINT = ""; // ← set to your production endpoint to enable real submissions
+
     function showErr(id, on){ const e = document.getElementById(id); if (e) e.style.display = on ? 'block' : 'none'; }
     function validEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+
     form?.addEventListener('submit', async (e)=>{
       e.preventDefault();
+      // reset errors
       ['err-name','err-email','err-skill','err-clearance','err-pitch'].forEach(id=>showErr(id,false));
+
       const data = Object.fromEntries(new FormData(form).entries());
       let ok = true;
       if (!data.name) { showErr('err-name', true); ok=false; }
@@ -856,9 +857,11 @@
       if (!data.clearance) { showErr('err-clearance', true); ok=false; }
       if (!data.pitch || data.pitch.trim().length < 12) { showErr('err-pitch', true); ok=false; }
       if (!ok) return;
+
       const btn = form.querySelector('button[type="submit"]');
       const original = btn.innerHTML;
       btn.disabled = true; btn.innerHTML = 'Transmitting...';
+
       try{
         let sent = false;
         if (FORM_ENDPOINT) {
@@ -868,6 +871,7 @@
           });
           sent = res.ok;
         } else {
+          // Simulated success for static hosting
           await new Promise(r=>setTimeout(r, 900));
           sent = true;
         }
@@ -885,22 +889,19 @@
       }
     });
 
-    // Year
+    // Year in footer
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // Accessibility: focus outline for keyboard users
-    let hadKeyboardEvent = false;
-    const root = document.documentElement;
+    // Accessibility – add a class when the user tabs
     function handleFirstTab(e){
       if (e.key === 'Tab') {
-        root.classList.add('user-is-tabbing');
-        hadKeyboardEvent = true;
+        document.documentElement.classList.add('user-is-tabbing');
         window.removeEventListener('keydown', handleFirstTab);
       }
     }
     window.addEventListener('keydown', handleFirstTab);
 
-    // Schema.org
+    // Schema.org for SEO
     const orgLd = {
       "@context":"https://schema.org",
       "@type":"Organization",
